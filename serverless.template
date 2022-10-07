@@ -1,0 +1,47 @@
+﻿{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  
+  "Resources": {  
+    "TicTacToeApi": {
+      "Type": "AWS::Serverless::Api",
+      "Properties": {
+        "StageName": "Prod"
+      }
+    },
+    
+    "SayHello": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "BackendEngineeringCandidateTest::BackendEngineeringCandidateTest.Function::SayHelloAsync",
+        "Runtime": "dotnetcore3.1",
+        "Description": "Says Hello, world!",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [
+          "AWSLambda_FullAccess"
+        ],
+        "Events": {
+          "GetHello": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/hello",
+              "Method": "GET",
+              "RestApiId": { "Ref": "TicTacToeApi" }
+            }
+          }
+        }
+      }
+    }
+  },
+  
+  "Outputs": {
+    "ApiURL": {
+      "Description": "API endpoint URL for Prod environment",
+      "Value": {
+        "Fn::Sub": "https://${TicTacToeApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+      }
+    }
+  }
+}
